@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>КАБУ</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#ffcf5a;--red:#e0283c;color-scheme:dark}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:radial-gradient(120% 80% at 50% 40%,#5c0d16,#1a0507 75%) fixed;color:#fff;font:16px/1.45 Inter,system-ui,sans-serif;overflow-x:clip}
+button{font:600 15px Inter,sans-serif;min-height:46px;padding:0 18px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
+button:disabled{opacity:.35}.pri{background:#fff;color:#2a060b;border-color:#fff}.dng{background:var(--red);border-color:var(--red)}
+input{font:600 18px Inter;width:100%;min-height:54px;border-radius:14px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.25);color:#fff;padding:0 16px;text-align:center}
+.screen{display:none}.screen.act{display:flex}
+.center{min-height:100dvh;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;max-width:420px;margin:0 auto}
+h1{font:900 clamp(56px,18vw,88px)/1 Unbounded,sans-serif;margin:0}
+.err{color:#ff8a8a;min-height:1.4em;margin:0}
+.dots::after{content:'…';animation:d 1.2s steps(3) infinite}@keyframes d{0%{content:'.'}50%{content:'..'}}
+#game{flex-direction:column;min-height:100dvh;max-width:640px;margin:0 auto;padding:10px 12px calc(14px + env(safe-area-inset-bottom));gap:10px}
+#top{display:flex;justify-content:space-between;font:600 12px Unbounded;opacity:.75}
+#opps{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.seat{background:rgba(0,0,0,.22);border:2px solid transparent;border-radius:16px;padding:7px 9px}
+.seat.turn{border-color:var(--gold);box-shadow:0 0 22px rgba(255,207,90,.25)}
+.who{display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:6px;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:50%;background:#3ddc84}.dot.off{background:#777}
+.who em{font-style:normal;background:var(--red);border-radius:6px;padding:0 6px;font:700 10px Unbounded}
+.who .pts{margin-left:auto;opacity:.6;font-size:12px}
+.who .sum{background:#fff;color:#2a060b;border-radius:8px;padding:0 7px;font-weight:700}
+.who .win{color:var(--gold);font-weight:700}
+.hand{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+#opps .card{--w:clamp(36px,10vw,52px)}
+#me .card{--w:clamp(66px,20vw,96px)}#me .hand{gap:9px}#me .seat{background:rgba(0,0,0,.3)}
+#mid{display:flex;align-items:flex-end;justify-content:center;gap:clamp(14px,5vw,30px);flex:1;padding:4px 0}
+.pile{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px}
+.pile .card{--w:clamp(58px,16vw,78px)}#drawn .card{--w:clamp(82px,25vw,112px)}
+#pair{min-height:36px;font-size:13px;padding:0 12px}
+#banner{text-align:center;font:600 clamp(14px,3.9vw,17px)/1.3 Unbounded,sans-serif;min-height:2.7em;display:grid;place-items:center}
+#banner.you{color:var(--gold)}#timer{font:600 12px Inter;opacity:.7;text-align:center;min-height:1.2em;margin-top:-6px}
+#bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;min-height:46px}
+#feed{list-style:none;margin:0;padding:0;text-align:center;font-size:13px}#feed li{opacity:.45}#feed li:first-child{opacity:.9}
+.card{--w:80px;width:var(--w);aspect-ratio:5/7;position:relative;flex:none;perspective:700px;container-type:inline-size;transition:transform .2s}
+.flip{position:absolute;inset:0;transition:transform .45s cubic-bezier(.3,.7,.3,1);transform-style:preserve-3d}
+.card.up .flip{transform:rotateY(180deg)}
+.side{position:absolute;inset:0;border-radius:9cqw;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+.side img{width:100%;height:100%;object-fit:cover;display:block}
+.fr{transform:rotateY(180deg);background:#fff}
+.bk{background:repeating-linear-gradient(45deg,rgba(255,255,255,.08) 0 5cqw,transparent 5cqw 10cqw),linear-gradient(160deg,#b3172a,#5a0912);border:4cqw solid #fff}.bk.im{border:0}
+.bk i{position:absolute;inset:0;display:grid;place-items:center;font:900 17cqw Unbounded,sans-serif;font-style:normal}
+.cf{position:absolute;inset:0;color:#16161a}.cf.red{color:#d21f32}
+.ix{position:absolute;top:5cqw;left:7cqw;font:700 18cqw/.95 Inter,sans-serif;text-align:center}
+.ix.bt{top:auto;left:auto;bottom:5cqw;right:7cqw;transform:rotate(180deg)}
+.pip{position:absolute;inset:0;display:grid;place-items:center;font-size:50cqw;line-height:1}
+.pip.fc{font:900 42cqw Unbounded,sans-serif;display:flex;flex-direction:column;justify-content:center;align-items:center}.pip.fc small{font-size:22cqw;margin-top:-3cqw}
+.jk .pip{font:900 15cqw Unbounded,sans-serif;color:#8e1420;writing-mode:vertical-rl}
+.val{position:absolute;left:50%;bottom:5cqw;transform:translateX(-50%);font:700 11cqw Inter;background:#16161a;color:#fff;border-radius:99px;padding:0 5cqw;opacity:.85}
+.empty{border:2px dashed rgba(255,255,255,.2);border-radius:9px}
+.card.tap{cursor:pointer;animation:pulse 1.4s ease-in-out infinite}.card.tap .side{box-shadow:0 0 0 3px var(--gold),0 6px 18px rgba(0,0,0,.5)}
+.card.mark .side{box-shadow:0 0 0 3px #5ad1ff}
+.card.sel{transform:translateY(-10px)}.card.sel .side{box-shadow:0 0 0 4px #fff}
+@keyframes pulse{50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.card,.flip{transition:none;animation:none!important}}
+#toast{position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) scale(.8);font:900 clamp(28px,9vw,48px) Unbounded;text-shadow:0 4px 24px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .25s;z-index:90;white-space:nowrap}
+#toast.act{opacity:1;transform:translate(-50%,-50%) scale(1)}
+</style>
+</head>
+<body>
+<section id="join" class="screen center act">
+  <h1>КАБУ</h1><p style="opacity:.7;margin:0">EwA · AIESEC in Astana</p>
+  <input id="pin" inputmode="numeric" maxlength="4" placeholder="PIN игры">
+  <input id="name" maxlength="20" placeholder="Твоё имя" autocomplete="nickname">
+  <button class="pri" id="go" style="width:100%;min-height:54px;font-size:18px">Войти</button>
+  <p class="err" id="err"></p>
+</section>
+<section id="wait" class="screen center">
+  <h1 style="font-size:44px">Ты в игре!</h1>
+  <p id="wname" style="font:700 22px Unbounded;margin:0"></p>
+  <p id="wtext" class="dots" style="opacity:.8;margin:0"></p>
+</section>
+<section id="game" class="screen">
+  <div id="top"><span id="tno"></span><span id="rno"></span></div>
+  <div id="opps"></div>
+  <div id="mid">
+    <div class="pile"><div id="deck"></div><span id="dcount"></span></div>
+    <div class="pile"><div id="disc"></div><button id="pair">Пара</button></div>
+    <div class="pile"><div id="drawn"></div><span id="dlabel"></span></div>
+  </div>
+  <div id="banner"></div><div id="timer"></div>
+  <div id="me"></div>
+  <div id="bar"></div>
+  <ul id="feed"></ul>
+</section>
+<div id="toast"></div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+{
+const $=s=>document.querySelector(s);
+const SUITS=['♠','♥','♦','♣'],RK=['','A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const POW={6:'peekOwn',7:'peekOwn',8:'spy',9:'spy',10:'swap',11:'swap',12:'look'};
+const PLABEL={peekOwn:'посмотреть свою',spy:'посмотреть чужую',swap:'поменять карты',look:'посмотреть и поменять'};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const red=c=>c.s===1||c.s===2;
+const val=c=>c.r===0?0:c.r===13?(red(c)?-2:13):c.r;
+const rname=c=>c.r===0?'джокер':RK[c.r];
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* дизайны карт: public/cards/AS.png, 10H.png, JK1.png, BACK.png и т.д. */
+const DESIGN={},CODES=['BACK','JK1','JK2'];'SHDC'.split('').forEach(s=>RK.slice(1).forEach(r=>CODES.push(r+s)));
+CODES.forEach(code=>{const im=new Image();im.onload=()=>{DESIGN[code]=im.src;if(V)render()};im.src='/cards/'+code+'.png'});
+const backInner=()=>DESIGN.BACK?`<img src="${DESIGN.BACK}" alt="">`:'<i>КАБУ</i>';
+function faceInner(c){
+  if(DESIGN[c.code])return `<img src="${DESIGN[c.code]}" alt="">`;
+  if(c.r===0)return '<div class="cf jk"><div class="pip">JOKER</div><span class="val">0</span></div>';
+  const R=RK[c.r],S=SUITS[c.s],fc=c.r>10;
+  return `<div class="cf ${red(c)?'red':''}"><div class="ix">${R}<br>${S}</div><div class="pip ${fc?'fc':''}">${fc?R+'<small>'+S+'</small>':S}</div><div class="ix bt">${R}<br>${S}</div><span class="val">${val(c)}</span></div>`;
+}
+const flipHTML=c=>`<div class="flip"><div class="side bk${DESIGN.BACK?' im':''}">${backInner()}</div><div class="side fr">${c?faceInner(c):''}</div></div>`;
+const faceCard=c=>`<div class="card up">${flipHTML(c)}</div>`;
+const backCard=()=>`<div class="card">${flipHTML(null)}</div>`;
+
+/* ---- подключение ---- */
+const sock=io();
+let tok=store.get('kabuTok')||'',V=null,sel=null,pairMode=false,prevUp=new Set(),off=0,joined=false,lastLog='';
+const qp=new URLSearchParams(location.search).get('pin');
+$('#pin').value=qp||store.get('kabuPin')||'';$('#name').value=store.get('kabuName')||'';
+if(qp)$('#name').focus();
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('act',s.id===id))}
+function join(auto){
+  const pin=$('#pin').value.trim(),name=$('#name').value.trim();
+  if(!auto&&(!pin||!name)){$('#err').textContent='Введи PIN и имя';return}
+  sock.emit('join',{pin,name,tok},r=>{
+    if(r.err){$('#err').textContent=r.err;joined=false;show('join');return}
+    tok=r.tok;joined=true;store.set('kabuTok',tok);store.set('kabuPin',pin);store.set('kabuName',name);
+  });
+}
+$('#go').onclick=()=>join(false);
+$('#name').addEventListener('keydown',e=>{if(e.key==='Enter')join(false)});
+sock.on('connect',()=>{if(joined||(tok&&$('#name').value&&$('#pin').value&&(!qp||qp===store.get('kabuPin'))))join(true)});
+sock.on('lobby',d=>{V=null;show('wait');$('#wname').textContent=d.name;
+  $('#wtext').textContent=d.state==='playing'?'Игра уже идёт. Ведущий добавит тебя при следующем распределении':'Ждём ведущего. Сейчас в лобби: '+d.count});
+sock.on('state',v=>{
+  const prevPhase=V&&V.phase;V=v;off=v.now-Date.now();
+  if(!(v.cur===v.me&&v.phase==='power'))sel=null;
+  if(!['turn','drawn','power'].includes(v.phase))pairMode=false;
+  if(v.log[0]&&v.log[0]!==lastLog){if(/КАБУ/.test(v.log[0]))toast('КАБУ!');else if(/пару/.test(v.log[0]))toast('Пара!');else if(/ошибся/.test(v.log[0]))toast('Мимо!')}
+  lastLog=v.log[0];
+  if(prevPhase!=='end'&&v.phase==='end')toast('Вскрытие!');
+  show('game');render();
+});
+const send=a=>sock.emit('act',a);
+let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('act');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('act'),1100)}
+
+/* ---- игра ---- */
+const pname=tok=>(V.players.find(p=>p.tok===tok)||{}).name||'';
+const myTurn=()=>V.cur===V.me&&['turn','drawn','power'].includes(V.phase);
+const canPair=()=>['turn','drawn','power'].includes(V.phase)&&V.top&&!pairMode;
+function tappable(p,c){
+  if(V.phase==='end')return false;
+  if(pairMode)return true;
+  const mine=p.tok===V.me;
+  if(V.phase==='peek')return mine&&V.peeks<2&&!c.face;
+  if(!myTurn())return false;
+  if(V.phase==='drawn')return mine;
+  if(V.phase==='power')switch(V.power){case 'peekOwn':case 'look2':return mine;case 'spy':case 'look':return !mine;case 'swap':return sel?true:mine}
+  return false;
+}
+function tap(p,c){
+  if(!tappable(p,c))return;
+  if(pairMode){pairMode=false;send({type:'pair',id:c.id});return render()}
+  const mine=p.tok===V.me;
+  if(V.phase==='peek')return send({type:'peek',id:c.id});
+  if(V.phase==='drawn')return send({type:'replace',id:c.id});
+  switch(V.power){
+    case 'peekOwn':return send({type:'peekOwn',id:c.id});
+    case 'spy':return send({type:'spy',id:c.id});
+    case 'look':return send({type:'look',id:c.id});
+    case 'look2':return send({type:'lookSwap',mine:c.id});
+    case 'swap':if(mine){sel=c.id;return render()}if(sel){send({type:'swap',mine:sel,other:c.id});sel=null}return;
+  }
+}
+let nowUp;
+function cardHTML(p,c){
+  const up=!!c.face;if(up)nowUp.add(c.id);
+  const cls=['card'];if(prevUp.has(c.id))cls.push('up');if(tappable(p,c))cls.push('tap');
+  if(V.marks.includes(c.id))cls.push('mark');if(sel===c.id)cls.push('sel');
+  return `<div class="${cls.join(' ')}" data-t="${esc(p.tok)}" data-id="${esc(c.id)}" data-up="${up?1:0}">${flipHTML(c.face)}</div>`;
+}
+function seatHTML(p){
+  const end=V.phase==='end',R=V.results,win=end&&R&&R.winners.includes(p.tok);
+  return `<div class="seat${V.cur===p.tok&&!end&&V.phase!=='peek'?' turn':''}"><div class="who"><span class="dot${p.online?'':' off'}"></span><span class="${win?'win':''}">${win?'★ ':''}${esc(p.tok===V.me?p.name+' (ты)':p.name)}</span>${V.caboBy===p.tok?'<em>КАБУ</em>':''}${end&&R?`<span class="sum">${R.sums[p.tok]}</span>`:''}<span class="pts">${p.total} очк.</span></div><div class="hand">${p.hand.map(c=>cardHTML(p,c)).join('')}</div></div>`;
+}
+function bannerText(){
+  if(pairMode)return['Пара: нажми любую карту ранга «'+rname(V.top)+'»',1];
+  const cn=pname(V.cur),mt=V.cur===V.me;
+  switch(V.phase){
+    case 'peek':return V.peeks<2?['Посмотри '+(2-V.peeks)+(V.peeks?' свою карту':' свои карты')+': нажми на них',1]:['Запоминай! Ждём остальных',0];
+    case 'turn':return mt?[(V.caboBy?'Последний ход! ':'')+'Твой ход: тяни карту',1]:['Ходит '+cn,0];
+    case 'drawn':return mt?[POW[V.drawn.r]?'Замени свою карту или сбрось и '+PLABEL[POW[V.drawn.r]]:'Нажми свою карту, чтобы заменить, или сбрось',1]:[cn+' решает, что делать с картой',0];
+    case 'power':if(!mt)return[cn+' использует способность',0];
+      return[{peekOwn:'Нажми свою карту, чтобы посмотреть',spy:'Нажми карту соперника, чтобы посмотреть',swap:sel?'Теперь выбери карту соперника':'Выбери свою карту для обмена',look:'Нажми карту соперника, чтобы посмотреть',look2:'Меняемся? Нажми свою карту или «Не меняться»'}[V.power],1];
+    case 'end':return[V.results.winners.includes(V.me)?'Ты выиграл раунд!':'Победил: '+V.results.winners.map(pname).join(', '),1];
+  }return['',0];
+}
+function render(){
+  if(!V)return;nowUp=new Set();
+  $('#tno').textContent='Стол '+V.table;$('#rno').textContent='Раунд '+V.round;
+  const me=V.players.find(p=>p.tok===V.me);
+  $('#opps').innerHTML=V.players.filter(p=>p.tok!==V.me).map(seatHTML).join('');
+  $('#me').innerHTML=seatHTML(me);
+  $('#deck').innerHTML=backCard();$('#dcount').textContent='Колода · '+V.deck;
+  $('#disc').innerHTML=V.top?faceCard(V.top):'<div class="card empty"></div>';
+  $('#drawn').innerHTML=V.drawn?(V.drawn.hidden?backCard():faceCard(V.drawn)):'<div class="card empty"></div>';
+  $('#dlabel').textContent=V.drawn?(V.drawn.hidden?'Тянет '+pname(V.cur):'Твоя карта'):'Вытянутая';
+  const pb=$('#pair');pb.disabled=!canPair();pb.textContent=V.top?'Пара: '+rname(V.top):'Пара';
+  const [b,you]=bannerText();$('#banner').textContent=b;$('#banner').classList.toggle('you',!!you);
+  const B=[],mt=V.cur===V.me;
+  if(pairMode)B.push(['cancel','Отмена','']);
+  else if(V.phase==='end')B.push(['next','Следующий раунд','pri']);
+  else if(mt&&V.phase==='turn'){B.push(['draw','Тянуть карту','pri']);if(V.canKabu)B.push(['kabu','КАБУ!','dng'])}
+  else if(mt&&V.phase==='drawn'){const pw=POW[V.drawn.r];B.push(['throw',pw?'Сбросить и '+PLABEL[pw]:'Сбросить',''])}
+  else if(mt&&V.phase==='power')B.push(['skip',V.power==='look2'?'Не меняться':'Пропустить способность','']);
+  $('#bar').innerHTML=B.map(([a,t,c])=>`<button data-a="${a}" class="${c}">${t}</button>`).join('');
+  $('#feed').innerHTML=V.log.map(t=>`<li>${esc(t)}</li>`).join('');
+  tick();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('[data-up]').forEach(el=>el.classList.toggle('up',el.dataset.up==='1'))));
+  prevUp=nowUp;
+}
+function tick(){
+  if(!V||!V.deadline||V.phase==='end'){$('#timer').textContent='';return}
+  const s=Math.max(0,Math.ceil((V.deadline-(Date.now()+off))/1000));
+  $('#timer').textContent=(V.phase==='peek'?'До начала ':V.cur===V.me?'На ход ':'')+s+' с';
+}
+setInterval(tick,1000);
+document.addEventListener('click',e=>{
+  const c=e.target.closest('.card[data-id]');
+  if(c&&V){const p=V.players.find(p=>p.tok===c.dataset.t),card=p&&p.hand.find(x=>x.id===c.dataset.id);if(card)tap(p,card);return}
+  const b=e.target.closest('[data-a]');if(b&&!b.disabled){const a=b.dataset.a;
+    if(a==='cancel'){pairMode=false;return render()}
+    send({type:a});return}
+  if(e.target.closest('#pair')&&V&&canPair()){pairMode=true;render();return}
+  if(e.target.closest('#deck')&&V&&V.cur===V.me&&V.phase==='turn')send({type:'draw'});
+});
+}
+</script>
+</body>
+</html>
