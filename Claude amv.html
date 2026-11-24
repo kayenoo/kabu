@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>КАБУ · экран ведущего</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@600;800;900&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--main:#5290BD;--navy:#011753;--teal:#33B59D;--blue:#2B7EC4;--sky:#88DEF9;--sky2:#6fbfed;--coral:#E8505B;color-scheme:light}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;color:var(--navy);font:16px/1.45 Nunito,system-ui,sans-serif;overflow-x:clip;background-color:var(--sky2);
+background-image:radial-gradient(160% 34% at 50% 112%,var(--teal) 49.6%,transparent 50%),
+radial-gradient(46px 26px at 9% 13%,rgba(255,255,255,.9) 98%,transparent),radial-gradient(70px 36px at 17% 11%,rgba(255,255,255,.9) 98%,transparent),radial-gradient(44px 24px at 24% 14%,rgba(255,255,255,.9) 98%,transparent),
+radial-gradient(52px 28px at 79% 24%,rgba(255,255,255,.85) 98%,transparent),radial-gradient(78px 38px at 88% 21%,rgba(255,255,255,.85) 98%,transparent),
+linear-gradient(180deg,var(--sky) 0%,var(--sky2) 40%,var(--main) 100%);background-attachment:fixed}
+button,.btn{font:800 15px Nunito,sans-serif;min-height:46px;padding:0 20px;border-radius:999px;border:3px solid var(--navy);background:#fff;color:var(--navy);box-shadow:0 4px 0 var(--navy);cursor:pointer;transition:transform .1s,box-shadow .1s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--navy)}
+button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+button:disabled{opacity:.45;box-shadow:none;cursor:default}
+.pri{background:var(--teal);color:#fff}.dng{background:var(--coral);color:#fff}.on{background:var(--blue);color:#fff}
+h1{font:900 clamp(56px,18vw,92px)/1 Rubik,sans-serif;margin:0;color:#fff;-webkit-text-stroke:3px var(--navy);paint-order:stroke fill;text-shadow:0 6px 0 var(--navy);letter-spacing:.01em}
+main{max-width:1400px;margin:0 auto;padding:clamp(20px,3vw,44px)}
+body{font-size:18px}
+button{min-height:54px;font-size:18px;padding:0 26px}
+.lobby{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:clamp(24px,4vw,60px);align-items:start}
+.join{background:#fff;border:4px solid var(--navy);border-radius:32px;padding:24px;text-align:center;width:min(380px,80vw);box-shadow:0 8px 0 var(--navy)}
+.join img{width:100%;aspect-ratio:1;display:block}
+.join .url{font:800 16px Nunito;margin-top:10px;word-break:break-all}
+.pin{font:900 clamp(56px,6vw,84px)/1 Rubik;letter-spacing:.06em;margin:6px 0 0;color:var(--blue)}
+.lbl{font-size:14px;font-weight:800;opacity:.6}
+.intro{font-weight:800;color:#fff;text-shadow:0 2px 0 var(--navy);max-width:40ch}
+.count{font:900 28px Rubik;margin:18px 0 12px;color:#fff;text-shadow:0 3px 0 var(--navy)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
+.chip{background:#fff;border:3px solid var(--navy);border-radius:999px;padding:8px 18px;font-weight:800;box-shadow:0 3px 0 var(--navy);animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
+.chip:nth-child(3n+2){background:var(--sky)}.chip:nth-child(3n){background:#c9f0e7}
+.chip.off{opacity:.45}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:20px 0}
+.bar span{font-weight:800;color:#fff;text-shadow:0 2px 0 var(--navy)}
+.tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.tb{background:#fff;border:3px solid var(--navy);border-radius:24px;padding:18px;box-shadow:0 6px 0 var(--navy)}
+.tb.end{box-shadow:0 0 0 5px var(--teal),0 6px 0 var(--navy)}
+.tb h3{font:900 22px Rubik;margin:0 0 4px;color:var(--blue)}.tb .st{font-size:14px;font-weight:700;opacity:.7;margin-bottom:10px}
+.tb ol{margin:0;padding:0;list-style:none}.tb li{display:flex;justify-content:space-between;padding:6px 0;border-bottom:2px dashed #d5e4f2;font-weight:700}
+.tb li b{font-variant-numeric:tabular-nums}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:30px;align-items:start}
+.lead{background:#fff;border:3px solid var(--navy);border-radius:24px;padding:18px;width:min(340px,90vw);box-shadow:0 6px 0 var(--navy);font-weight:700}
+.lead h3{font:900 18px Rubik;margin:0 0 10px;color:var(--teal)}
+.mini{display:flex;gap:14px;align-items:center;background:#fff;border:3px solid var(--navy);border-radius:20px;padding:10px 14px;margin-top:16px;box-shadow:0 5px 0 var(--navy)}
+.mini img{width:90px;height:90px}.mini b{font:900 30px Rubik;color:var(--blue)}
+@media(max-width:820px){.lobby,.top{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main id="app"><h1>КАБУ</h1><p>Подключение…</p></main>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+{
+const sock=io(),app=document.getElementById('app');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let H=null,saved={};try{saved=JSON.parse(localStorage.getItem('kabuHost')||'{}')}catch(e){}
+sock.on('connect',()=>sock.emit('host:create',saved,r=>{saved=r;try{localStorage.setItem('kabuHost',JSON.stringify(r))}catch(e){}}));
+sock.on('host',h=>{H=h;render()});
+const joinUrl=()=>location.origin+'/?pin='+H.pin;
+const qr=()=>'/qr.svg?u='+encodeURIComponent(joinUrl());
+function render(){
+  const on=H.players.filter(p=>p.online);
+  if(H.state==='lobby'){
+    app.innerHTML=`<div class="lobby"><div class="join"><img src="${qr()}" alt="QR для входа"><div class="lbl">PIN игры</div><div class="pin">${H.pin}</div><div class="url">${esc(joinUrl())}</div></div>
+    <div><h1>КАБУ</h1><p class="intro">Сканируй QR, вводи имя — и жди. Когда все зайдут, раскидаем вас по столам по 3–4 человека.</p>
+    <div class="count">Игроков: ${on.length}</div>
+    <div class="chips">${H.players.map(p=>`<span class="chip${p.online?'':' off'}">${esc(p.name)}</span>`).join('')||'<span class="intro">Пока никого</span>'}</div>
+    <div class="bar"><button class="pri" data-a="start" ${on.length<2?'disabled':''}>Начать и раскидать по столам</button><button data-a="new">Новая игра (новый PIN)</button></div></div></div>`;
+  }else{
+    const all=H.tables.flatMap(t=>t.members.map(m=>({...m,t:t.no}))).sort((a,b)=>a.total-b.total);
+    const wait=H.players.filter(p=>p.table==null&&p.online);
+    app.innerHTML=`<div class="top"><div><h1 style="font-size:clamp(36px,4vw,56px);margin-bottom:6px">КАБУ · ${H.tables.length} ${H.tables.length===1?'стол':'стола(ов)'}</h1>
+    <div class="bar"><button data-a="lobby">Вернуть всех в лобби и перераспределить</button>${wait.length?`<span style="opacity:.7">Ждут следующего распределения: ${wait.map(p=>esc(p.name)).join(', ')}</span>`:''}</div>
+    <div class="tables">${H.tables.map(t=>`<div class="tb${t.phase==='end'?' end':''}"><h3>Стол ${t.no}</h3><div class="st">Раунд ${t.round} · ${t.phase==='peek'?'смотрят карты':t.phase==='end'?'вскрытие':'ходит '+esc(t.cur)}${t.caboBy?' · КАБУ: '+esc(t.caboBy):''}</div>
+      <ol>${t.members.map(m=>`<li><span>${esc(m.name)}${m.online?'':' (офлайн)'}</span><b>${m.total}</b></li>`).join('')}</ol></div>`).join('')}</div></div>
+    <div><div class="lead"><h3>Лидеры (меньше — лучше)</h3><ol style="margin:0;padding-left:22px">${all.slice(0,10).map(m=>`<li>${esc(m.name)} · <b>${m.total}</b> <span style="opacity:.5">стол ${m.t}</span></li>`).join('')}</ol></div>
+    <div class="mini"><img src="${qr()}" alt=""><div><div class="lbl">Опоздал? PIN</div><b>${H.pin}</b></div></div></div></div>`;
+  }
+}
+app.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const a=b.dataset.a;
+  if(a==='start')sock.emit('host:start');
+  if(a==='lobby')sock.emit('host:lobby');
+  if(a==='new'){saved={};sock.emit('host:create',{},r=>{saved=r;try{localStorage.setItem('kabuHost',JSON.stringify(r))}catch(e){}})}
+});
+}
+</script>
+</body>
+</html>
